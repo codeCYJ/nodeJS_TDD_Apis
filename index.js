@@ -1,18 +1,14 @@
-const http = require("http");
+const express = require("express");
+const app = express();
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const user = require('./api/user');
 
-const hostname = "127.0.0.1";
-const port = 3000;
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan('dev'));
+}
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/users", user);
 
-const server = http.createServer((req, res) => { 
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World\n");
-});
-
-server.listen(port, hostname, () => {  // 서버를 종료하지않고 요청대기상태로 만드는 함수
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-
-// yj@YJui-MacBookPro nodeJS_apiTest % node index.js => Server running at http://127.0.0.1:3000/
-// yj@YJui-MacBookPro nodeJS_apiTest % curl -X GET 'localhost:3000' => Hello World
+module.exports = app;
